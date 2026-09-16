@@ -1,137 +1,370 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi" data-theme="gold-dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AS Maths Academy | Excel in Mathematics</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title id="site-title">Golden Academy - Premier Institute</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0c;
+            --bg-secondary: #121216;
+            --bg-card: #18181f;
+            --accent-gold: #d4af37;
+            --accent-gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1aa;
+            --border-gold: rgba(212, 175, 55, 0.3);
+            --shadow-gold: 0 10px 30px -10px rgba(212, 175, 55, 0.25);
+        }
+
+        [data-theme="royal-blue"] {
+            --bg-primary: #030712; --bg-secondary: #0b132b; --bg-card: #1c2541;
+            --accent-gold: #38bdf8; --accent-gold-gradient: linear-gradient(135deg, #0284c7, #38bdf8, #7dd3fc);
+            --border-gold: rgba(56, 189, 248, 0.3); --shadow-gold: 0 10px 30px -10px rgba(56, 189, 248, 0.25);
+        }
+
+        [data-theme="emerald"] {
+            --bg-primary: #022c22; --bg-secondary: #064e3b; --bg-card: #047857;
+            --accent-gold: #34d399; --accent-gold-gradient: linear-gradient(135deg, #059669, #34d399, #6ee7b7);
+            --border-gold: rgba(52, 211, 153, 0.3); --shadow-gold: 0 10px 30px -10px rgba(52, 211, 153, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-primary); color: var(--text-main); overflow-x: hidden; }
+
+        .gold-text { background: var(--accent-gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gold-btn { background: var(--accent-gold-gradient); color: #000; font-weight: 700; border: none; padding: 12px 24px; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: var(--shadow-gold); }
+        .gold-btn:hover { transform: translateY(-2px); opacity: 0.95; }
+
+        /* Header Navigation */
+        header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 12, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-gold); z-index: 1000; padding: 15px 8%; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 900; }
+
+        /* Announcement Ticker */
+        .ticker-wrap { margin-top: 70px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-gold); overflow: hidden; white-space: nowrap; padding: 10px 0; }
+        .ticker { display: inline-block; animation: ticker 25s linear infinite; font-weight: 600; color: var(--accent-gold); }
+        @keyframes ticker { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* Auto Scrolling Banner Slider */
+        .slider-container { position: relative; max-width: 100%; overflow: hidden; border-bottom: 1px solid var(--border-gold); }
+        .slider-track { display: flex; transition: transform 0.6s ease-in-out; }
+        .slide { min-width: 100%; height: 420px; position: relative; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65); }
+        .slide-caption { position: absolute; bottom: 40px; left: 8%; color: #fff; max-width: 600px; }
+        .slide-caption h2 { font-family: 'Cinzel', serif; font-size: 2.2rem; margin-bottom: 10px; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: var(--accent-gold); border: 1px solid var(--border-gold); padding: 12px 18px; border-radius: 50%; cursor: pointer; z-index: 10; }
+        .slider-btn.left { left: 20px; }
+        .slider-btn.right { right: 20px; }
+
+        /* Sections Universal */
+        section { padding: 70px 8%; }
+        .section-title { font-family: 'Cinzel', serif; font-size: 2.2rem; text-align: center; margin-bottom: 40px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 14px; padding: 20px; position: relative; }
+        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+
+        /* Interleaved Feature Rows (Photo + Description) */
+        .feature-row { display: flex; align-items: center; gap: 50px; margin-bottom: 60px; }
+        .feature-row.reverse { flex-direction: row-reverse; }
+        .feature-text { flex: 1; }
+        .feature-text h3 { font-family: 'Cinzel', serif; font-size: 1.8rem; margin-bottom: 15px; }
+        .feature-text p { color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+        .feature-img { flex: 1; text-align: center; }
+        .feature-img img { width: 100%; border-radius: 16px; border: 1px solid var(--border-gold); box-shadow: var(--shadow-gold); }
+
+        /* Admin Controls Visibility */
+        .admin-only { display: none; }
+        body.is-admin .admin-only { display: block !important; }
+
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-gold); width: 90%; max-width: 550px; border-radius: 16px; padding: 30px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 12px; margin: 8px 0; background: var(--bg-primary); border: 1px solid var(--border-gold); color: #fff; border-radius: 8px; }
+
+        /* WhatsApp Floating Icon */
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); z-index: 999; text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .feature-row, .feature-row.reverse { flex-direction: column; gap: 25px; }
+            .slide { height: 300px; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Header / Navigation -->
+    <!-- Header Navigation -->
     <header>
-        <div class="container nav-container">
-            <a href="#" class="logo">AS Maths <span>Academy</span></a>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#courses">Subjects</a></li>
-                    <li><a href="#philosophy">Teaching Method</a></li>
-                    <li><a href="#contact" class="btn-nav">Join Now</a></li>
-                </ul>
-            </nav>
-        </div>
+        <div class="logo gold-text" id="disp-coaching-name">GOLDEN ACADEMY</div>
+        <button class="gold-btn" onclick="openModal('adminModal')"><i class="fa-solid fa-lock"></i> Admin Dashboard</button>
     </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container hero-content">
-            <h1>Unlock Your Potential with <span>AS Maths Academy</span></h1>
-            <p>Mastering mathematics through clarity, conceptual understanding, and problem-solving excellence.</p>
-            <a href="#courses" class="btn-primary">Explore Our Courses</a>
-        </div>
-    </section>
+    <!-- Announcement Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="disp-ticker">⚡ New Batches Starting This Week! Register Online Today For Discount!</div>
+    </div>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <h2 class="section-title">About AS Maths Academy</h2>
-            <div class="about-grid">
-                <div class="about-text">
-                    <p>Welcome to <strong>AS Maths Academy</strong>, where numbers transform into opportunities! We are dedicated to providing comprehensive mathematical education to students of all levels.</p>
-                    <p>At AS Maths Academy, we believe that math is not merely about memorizing formulas—it is a language of logic and critical thinking. Our mission is to eliminate the fear of mathematics and build lifelong confidence through structured, interactive learning.</p>
+    <!-- Auto-Scrolling Banner Slider -->
+    <div class="slider-container">
+        <button class="slider-btn left" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slider-btn right" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="slider-track" id="slider-track">
+            <!-- Dynamic Banner Slides -->
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=80" alt="Banner 1">
+                <div class="slide-caption">
+                    <h2 class="gold-text">Welcome to Golden Academy</h2>
+                    <p>Empowering Students for Academic Success & Competitive Excellence.</p>
                 </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <h3>100%</h3>
-                        <p>Concept Clarity</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Interactive</h3>
-                        <p>Learning Sessions</p>
-                    </div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80" alt="Banner 2">
+                <div class="slide-caption">
+                    <h2 class="gold-text">Interactive Digital Classrooms</h2>
+                    <p>Learn with modern facilities and experienced faculty guidance.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Photo + Description Section 1 -->
+    <section>
+        <div class="feature-row">
+            <div class="feature-text">
+                <h3 class="gold-text" id="disp-feat1-title">Modern Learning Environment</h3>
+                <p id="disp-feat1-desc">Our smart classrooms are equipped with modern digital technology, enabling students to grasp complex subjects with visual clarity and ease.</p>
+                <a href="#admission-section" class="gold-btn">Join Us Today</a>
+            </div>
+            <div class="feature-img">
+                <img id="disp-feat1-img" src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80" alt="Feature Image">
             </div>
         </div>
     </section>
 
-    <!-- Courses / Maths Descriptions -->
-    <section id="courses" class="courses">
-        <div class="container">
-            <h2 class="section-title">Mathematics Curriculum</h2>
-            <p class="section-subtitle">A deep dive into core mathematical disciplines</p>
-            
-            <div class="card-grid">
-                <!-- Card 1 -->
-                <div class="card">
-                    <div class="card-icon">∑</div>
-                    <h3>Algebra & Arithmetic</h3>
-                    <p>Explore linear equations, quadratics, polynomials, and foundational arithmetic. Build strong analytical tools to solve complex real-world variables.</p>
-                </div>
-                
-                <!-- Card 2 -->
-                <div class="card">
-                    <div class="card-icon">∆</div>
-                    <h3>Geometry & Trigonometry</h3>
-                    <p>Understand shapes, spatial reasoning, proofs, and trigonometric ratios. Master spatial visualization and theorems step by step.</p>
-                </div>
+    <!-- Courses Cards Section -->
+    <section style="background: var(--bg-secondary);">
+        <h2 class="section-title gold-text">Our Courses</h2>
+        <div class="grid-3" id="courses-grid"></div>
+    </section>
 
-                <!-- Card 3 -->
-                <div class="card">
-                    <div class="card-icon">∫</div>
-                    <h3>Calculus (Differential & Integral)</h3>
-                    <p>Master the mathematics of change. From limits and derivatives to integration, prepare for advanced mathematical and engineering fields.</p>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="card">
-                    <div class="card-icon">%</div>
-                    <h3>Statistics & Probability</h3>
-                    <p>Learn to analyze data, calculate probabilities, and make data-driven decisions using key statistical models and interpretations.</p>
-                </div>
+    <!-- Dynamic Photo + Description Section 2 (Reverse) -->
+    <section>
+        <div class="feature-row reverse">
+            <div class="feature-text">
+                <h3 class="gold-text" id="disp-feat2-title">Comprehensive Study Material & Test Series</h3>
+                <p id="disp-feat2-desc">Every student receives meticulously crafted study notes, weekly practice papers, and regular assessment reports to track academic growth.</p>
+                <a href="https://wa.me/" id="disp-wa-link" target="_blank" class="gold-btn"><i class="fa-brands fa-whatsapp"></i> Contact Admin</a>
+            </div>
+            <div class="feature-img">
+                <img id="disp-feat2-img" src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80" alt="Feature Image">
             </div>
         </div>
     </section>
 
-    <!-- Teaching Philosophy Section -->
-    <section id="philosophy" class="philosophy">
-        <div class="container">
-            <h2 class="section-title">Why Learn With Us?</h2>
-            <div class="philosophy-grid">
-                <div class="p-box">
-                    <h3>1. Conceptual Clarity First</h3>
-                    <p>We prioritize 'Why' over 'How'. Understanding foundational concepts makes solving complex mathematical problems effortless.</p>
-                </div>
-                <div class="p-box">
-                    <h3>2. Step-by-Step Problem Solving</h3>
-                    <p>Every problem is broken down logically into simplified steps, helping students develop systematic problem-solving habits.</p>
-                </div>
-                <div class="p-box">
-                    <h3>3. Interactive & Personalized Guidance</h3>
-                    <p>Small class sizes and personalized attention ensure that every question is answered and no student is left behind.</p>
-                </div>
-            </div>
+    <!-- Teachers & Faculty -->
+    <section style="background: var(--bg-secondary);">
+        <h2 class="section-title gold-text">Expert Faculty</h2>
+        <div class="grid-3" id="faculty-grid"></div>
+    </section>
+
+    <!-- Online Admission Enquiry Form -->
+    <section id="admission-section">
+        <h2 class="section-title gold-text">Online Admission Enquiry</h2>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <input type="text" id="enq-name" placeholder="Student Full Name" style="width:100%; padding:12px; margin:8px 0;">
+            <input type="text" id="enq-phone" placeholder="Mobile Number" style="width:100%; padding:12px; margin:8px 0;">
+            <select id="enq-course" style="width:100%; padding:12px; margin:8px 0;">
+                <option value="Class 10th">Class 10th Batch</option>
+                <option value="Class 12th">Class 12th Batch</option>
+                <option value="NEET/JEE">NEET / JEE Target Batch</option>
+            </select>
+            <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="submitEnquiry()">Submit Form</button>
         </div>
     </section>
 
-    <!-- Contact / CTA Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Ready to Excel in Mathematics?</h2>
-            <p>Join AS Maths Academy today and start your journey towards mathematical mastery!</p>
-            <a href="mailto:contact@asmathsacademy.com" class="btn-primary">Get In Touch</a>
-        </div>
+    <!-- PDF Material Section -->
+    <section style="background: var(--bg-secondary);">
+        <h2 class="section-title gold-text">Study Material & PDFs</h2>
+        <div class="grid-3" id="pdf-grid"></div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <p>&copy; 2026 AS Maths Academy. All Rights Reserved.</p>
-        </div>
+        <p style="text-align:center; padding: 40px; border-top: 1px solid var(--border-gold);" class="gold-text" id="disp-footer-name">Golden Academy © 2026</p>
     </footer>
 
+    <!-- WhatsApp Floating Icon -->
+    <a href="https://wa.me/" id="disp-wa-float" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+    <!-- ADMIN SYSTEM DASHBOARD MODAL -->
+    <div class="modal" id="adminModal">
+        <div class="modal-box">
+            <h2 class="gold-text" style="margin-bottom:15px;">Admin Control Panel</h2>
+            
+            <div id="login-form">
+                <input type="email" id="admin-email" placeholder="Admin Email">
+                <input type="password" id="admin-pass" placeholder="Password">
+                <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="handleLogin()">Login</button>
+            </div>
+
+            <div id="admin-controls" class="admin-only">
+                <h4 class="gold-text">Theme & Color Options</h4>
+                <select id="theme-select" onchange="changeTheme(this.value)">
+                    <option value="gold-dark">Golden & Black</option>
+                    <option value="royal-blue">Royal Cyber Blue</option>
+                    <option value="emerald">Emerald Green</option>
+                </select>
+
+                <h4 class="gold-text" style="margin-top:15px;">Coaching Info Settings</h4>
+                <input type="text" id="edit-name" placeholder="Coaching Name">
+                <input type="text" id="edit-ticker" placeholder="Announcement Ticker">
+                <input type="text" id="edit-wa" placeholder="WhatsApp Phone Number">
+                
+                <h4 class="gold-text" style="margin-top:15px;">Middle Photo-Description Blocks</h4>
+                <input type="text" id="edit-f1-title" placeholder="Block 1 Title">
+                <textarea id="edit-f1-desc" placeholder="Block 1 Description"></textarea>
+                <input type="text" id="edit-f1-img" placeholder="Block 1 Image URL">
+
+                <input type="text" id="edit-f2-title" placeholder="Block 2 Title">
+                <textarea id="edit-f2-desc" placeholder="Block 2 Description"></textarea>
+                <input type="text" id="edit-f2-img" placeholder="Block 2 Image URL">
+
+                <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="saveGeneral()">Save All Updates</button>
+
+                <hr style="border-color:var(--border-gold); margin:20px 0;">
+                <h4 class="gold-text">Add New Banner to Slider</h4>
+                <input type="text" id="new-banner-img" placeholder="Banner Image URL">
+                <input type="text" id="new-banner-title" placeholder="Banner Title">
+                <input type="text" id="new-banner-desc" placeholder="Banner Description">
+                <button class="gold-btn" style="width:100%;" onclick="addBanner()">Add Slide Banner</button>
+
+                <hr style="border-color:var(--border-gold); margin:20px 0;">
+                <h4 class="gold-text">Security</h4>
+                <input type="password" id="new-admin-pass" placeholder="New Password">
+                <button class="gold-btn" style="width:100%;" onclick="updatePassword()">Update Password</button>
+
+                <button class="gold-btn" style="width:100%; margin-top:20px; background:#ef4444; color:#fff;" onclick="handleLogout()">Logout</button>
+            </div>
+            <button onclick="closeModal('adminModal')" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+    </div>
+
+    <script>
+        // FIREBASE INITIALIZATION
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Banner Slider Logic
+        let currentSlide = 0;
+        function updateSlider() {
+            const track = document.getElementById('slider-track');
+            const totalSlides = track.children.length;
+            if (totalSlides === 0) return;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function nextSlide() { currentSlide++; updateSlider(); }
+        function prevSlide() { currentSlide--; updateSlider(); }
+        setInterval(nextSlide, 5000); // Auto-scroll every 5 seconds
+
+        // Auth & Modal Helpers
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.body.classList.add('is-admin');
+                document.getElementById('login-form').style.display = "none";
+                document.getElementById('admin-controls').style.display = "block";
+            } else {
+                document.body.classList.remove('is-admin');
+                document.getElementById('login-form').style.display = "block";
+                document.getElementById('admin-controls').style.display = "none";
+            }
+        });
+
+        function handleLogin() {
+            auth.signInWithEmailAndPassword(
+                document.getElementById('admin-email').value,
+                document.getElementById('admin-pass').value
+            ).then(() => closeModal('adminModal')).catch(e => alert(e.message));
+        }
+
+        function handleLogout() { auth.signOut().then(() => closeModal('adminModal')); }
+
+        function updatePassword() {
+            const p = document.getElementById('new-admin-pass').value;
+            if(p.length >= 6) auth.currentUser.updatePassword(p).then(() => alert("Password Updated!"));
+        }
+
+        // Live Real-Time Data Sync
+        db.collection('settings').doc('general').onSnapshot(doc => {
+            if (doc.exists) {
+                const d = doc.data();
+                document.getElementById('disp-coaching-name').innerText = d.name || "GOLDEN ACADEMY";
+                document.getElementById('disp-footer-name').innerText = (d.name || "Golden Academy") + " © 2026";
+                document.getElementById('disp-ticker').innerText = d.ticker || "";
+                document.getElementById('disp-wa-link').href = "https://wa.me/" + (d.wa || "");
+                document.getElementById('disp-wa-float').href = "https://wa.me/" + (d.wa || "");
+                
+                // Photo-Description Blocks Sync
+                if(d.f1Title) document.getElementById('disp-feat1-title').innerText = d.f1Title;
+                if(d.f1Desc) document.getElementById('disp-feat1-desc').innerText = d.f1Desc;
+                if(d.f1Img) document.getElementById('disp-feat1-img').src = d.f1Img;
+
+                if(d.f2Title) document.getElementById('disp-feat2-title').innerText = d.f2Title;
+                if(d.f2Desc) document.getElementById('disp-feat2-desc').innerText = d.f2Desc;
+                if(d.f2Img) document.getElementById('disp-feat2-img').src = d.f2Img;
+            }
+        });
+
+        function saveGeneral() {
+            db.collection('settings').doc('general').set({
+                name: document.getElementById('edit-name').value,
+                ticker: document.getElementById('edit-ticker').value,
+                wa: document.getElementById('edit-wa').value,
+                f1Title: document.getElementById('edit-f1-title').value,
+                f1Desc: document.getElementById('edit-f1-desc').value,
+                f1Img: document.getElementById('edit-f1-img').value,
+                f2Title: document.getElementById('edit-f2-title').value,
+                f2Desc: document.getElementById('edit-f2-desc').value,
+                f2Img: document.getElementById('edit-f2-img').value
+            }, { merge: true }).then(() => alert("Saved Successfully!"));
+        }
+
+        function changeTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        function submitEnquiry() {
+            const name = document.getElementById('enq-name').value;
+            const phone = document.getElementById('enq-phone').value;
+            const course = document.getElementById('enq-course').value;
+            if(!name || !phone) return alert("Please fill all details");
+            
+            db.collection('enquiries').add({ name, phone, course, timestamp: new Date() })
+                .then(() => alert("Admission Enquiry Submitted Successfully!"));
+        }
+    </script>
 </body>
 </html>
