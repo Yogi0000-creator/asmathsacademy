@@ -30,8 +30,8 @@
         body { background-color: var(--bg-primary); color: var(--text-main); overflow-x: hidden; }
 
         .gold-text { background: var(--accent-gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-btn { background: var(--accent-gold-gradient); color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: var(--shadow-gold); }
-        .delete-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-weight: 600; font-size: 0.8rem; }
+        .gold-btn { background: var(--accent-gold-gradient); color: #000; font-weight: 700; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: var(--shadow-gold); }
+        .delete-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
         
         /* Navigation */
         header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 12, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-gold); z-index: 1000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; }
@@ -60,21 +60,28 @@
         .card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 14px; padding: 20px; position: relative; }
         .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
 
+        /* Form Fix CSS */
+        .form-card { max-width: 550px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 16px; padding: 30px; }
+        .form-card input, .form-card select { width: 100%; padding: 12px 16px; margin-bottom: 15px; background: var(--bg-primary); border: 1px solid var(--border-gold); color: #fff; border-radius: 8px; font-size: 1rem; outline: none; }
+        .form-card input:focus, .form-card select:focus { border-color: var(--accent-gold); box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+
         /* Custom Banner Block */
         .custom-banner { width: 100%; margin: 30px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-gold); position: relative; }
         .custom-banner img { width: 100%; height: 220px; object-fit: cover; display: block; filter: brightness(0.7); }
         .custom-banner-text { position: absolute; top: 50%; left: 5%; transform: translateY(-50%); max-width: 80%; }
 
-        /* Admin Controls */
+        /* Admin Controls & Notifications */
         .admin-only { display: none; }
         body.is-admin .admin-only { display: block !important; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-gold); width: 90%; max-width: 650px; border-radius: 16px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-gold); width: 90%; max-width: 700px; border-radius: 16px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; }
         .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 10px; margin: 6px 0; background: var(--bg-primary); border: 1px solid var(--border-gold); color: #fff; border-radius: 8px; }
         
         .admin-block { background: var(--bg-card); padding: 15px; border-radius: 10px; border: 1px solid var(--border-gold); margin-top: 15px; }
         .badge-seq { position: absolute; top: 10px; right: 10px; background: var(--accent-gold); color: #000; padding: 2px 8px; border-radius: 12px; font-weight: 700; font-size: 0.75rem; }
+
+        .enquiry-card { background: var(--bg-primary); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
 
         .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; z-index: 999; text-decoration: none; }
 
@@ -134,18 +141,18 @@
         <div class="grid-3" id="faculty-grid"></div>
     </section>
 
-    <!-- Admission Form -->
+    <!-- Admission Form (Fixed Design) -->
     <section id="admission">
         <h2 class="section-title gold-text">Online Admission Enquiry</h2>
-        <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <div class="form-card">
             <input type="text" id="enq-name" placeholder="Student Full Name">
             <input type="text" id="enq-phone" placeholder="Mobile Number">
             <select id="enq-course">
-                <option value="Class 10th">Class 10th Batch</option>
-                <option value="Class 12th">Class 12th Batch</option>
-                <option value="NEET/JEE">NEET / JEE Target Batch</option>
+                <option value="Class 10th Batch">Class 10th Batch</option>
+                <option value="Class 12th Batch">Class 12th Batch</option>
+                <option value="NEET/JEE Target Batch">NEET / JEE Target Batch</option>
             </select>
-            <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="submitEnquiry()">Submit Form</button>
+            <button class="gold-btn" style="width:100%;" onclick="submitEnquiry()">Submit Form</button>
         </div>
     </section>
 
@@ -181,6 +188,14 @@
 
             <div id="admin-controls" class="admin-only">
                 
+                <!-- Student Enquiry Notifications -->
+                <div class="admin-block" style="border: 2px solid var(--accent-gold);">
+                    <h4 class="gold-text"><i class="fa-solid fa-bell"></i> New Admission Enquiries / Notifications</h4>
+                    <div id="enquiries-list" style="margin-top: 10px;">
+                        <p style="color:var(--text-muted); font-size:0.9rem;">Loading enquiries...</p>
+                    </div>
+                </div>
+
                 <!-- General Info -->
                 <div class="admin-block">
                     <h4 class="gold-text">1. General Settings</h4>
@@ -297,6 +312,7 @@
                 document.body.classList.add('is-admin');
                 document.getElementById('login-form').style.display = "none";
                 document.getElementById('admin-controls').style.display = "block";
+                listenEnquiries();
             } else {
                 document.body.classList.remove('is-admin');
                 document.getElementById('login-form').style.display = "block";
@@ -335,6 +351,29 @@
                 ticker: document.getElementById('edit-ticker').value,
                 wa: document.getElementById('edit-wa').value
             }, { merge: true }).then(() => alert("Settings Updated!"));
+        }
+
+        // Live Notification / Enquiries Listener for Admin Panel
+        function listenEnquiries() {
+            db.collection('enquiries').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                const list = document.getElementById('enquiries-list');
+                list.innerHTML = "";
+                if(snapshot.empty) {
+                    list.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">No new enquiries yet.</p>`;
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const e = doc.data();
+                    list.innerHTML += `
+                        <div class="enquiry-card">
+                            <div>
+                                <strong class="gold-text">${e.name}</strong><br>
+                                <span style="font-size:0.85rem; color:#fff;">📞 ${e.phone} | 📚 ${e.course}</span>
+                            </div>
+                            <button class="delete-btn" onclick="deleteDoc('enquiries', '${doc.id}')">Delete</button>
+                        </div>`;
+                });
+            });
         }
 
         // Realtime Render Function
@@ -478,7 +517,7 @@
             });
         }
 
-        // Instant Add Functions with Auto Input Clear
+        // Add Functions
         function addBanner(type) {
             const titleInput = document.getElementById(type === 'hero' ? 'b-title' : 'mb-title');
             const descInput = document.getElementById(type === 'hero' ? 'b-desc' : 'mb-desc');
@@ -565,13 +604,19 @@
             }
         }
 
+        // Enquiry Form Submit & Reset
         function submitEnquiry() {
             const name = document.getElementById('enq-name').value;
             const phone = document.getElementById('enq-phone').value;
             const course = document.getElementById('enq-course').value;
-            if(!name || !phone) return alert("Fill all details");
+            if(!name || !phone) return alert("Please fill all details!");
+            
             db.collection('enquiries').add({ name, phone, course, timestamp: new Date() })
-                .then(() => alert("Enquiry Submitted Successfully!"));
+                .then(() => {
+                    alert("Enquiry Submitted Successfully! We will contact you soon.");
+                    document.getElementById('enq-name').value = "";
+                    document.getElementById('enq-phone').value = "";
+                });
         }
     </script>
 </body>
