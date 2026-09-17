@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title">Golden Academy - Premier Institute</title>
-    <!-- Fonts & Icons -->
+    <!-- Favicon fix -->
+    <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs (v9 Compat) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <style>
         :root {
@@ -32,6 +32,7 @@
 
         .gold-text { background: var(--accent-gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .gold-btn { background: var(--accent-gold-gradient); color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: var(--shadow-gold); }
+        .delete-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-weight: 600; }
         
         /* Header Navigation */
         header { position: fixed; top: 0; width: 100%; background: rgba(10, 10, 12, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-gold); z-index: 1000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; }
@@ -42,7 +43,7 @@
         .nav-links a:hover { color: var(--accent-gold); }
         .menu-toggle { display: none; font-size: 1.5rem; color: var(--accent-gold); cursor: pointer; }
 
-        /* Ticker Bar */
+        /* Ticker */
         .ticker-wrap { margin-top: 70px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-gold); overflow: hidden; white-space: nowrap; padding: 12px 0; position: relative; z-index: 900; }
         .ticker { display: inline-block; animation: ticker 22s linear infinite; font-weight: 600; color: var(--accent-gold); font-size: 0.95rem; }
         @keyframes ticker { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
@@ -55,19 +56,14 @@
         .slide-caption { position: absolute; bottom: 30px; left: 5%; color: #fff; max-width: 600px; padding-right: 5%; }
         .slide-caption h2 { font-family: 'Cinzel', serif; font-size: 1.8rem; margin-bottom: 8px; }
 
-        /* Layout Universal */
+        /* Layout */
         section { padding: 60px 5%; }
         .section-title { font-family: 'Cinzel', serif; font-size: 2rem; text-align: center; margin-bottom: 35px; }
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 14px; padding: 20px; }
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
 
-        .feature-row { display: flex; align-items: center; gap: 40px; margin-bottom: 50px; }
-        .feature-row.reverse { flex-direction: row-reverse; }
-        .feature-text { flex: 1; }
-        .feature-img { flex: 1; text-align: center; }
-        .feature-img img { width: 100%; border-radius: 14px; border: 1px solid var(--border-gold); }
-
-        /* Uneditable Developer Card */
+        /* Developer Section */
         .developer-section { background: var(--bg-secondary); border-top: 1px solid var(--border-gold); text-align: center; padding: 50px 5%; }
         .developer-card { max-width: 600px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 16px; padding: 30px; box-shadow: var(--shadow-gold); }
         .developer-card h3 { font-family: 'Cinzel', serif; font-size: 1.6rem; margin-bottom: 10px; }
@@ -79,8 +75,10 @@
         body.is-admin .admin-only { display: block !important; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-gold); width: 90%; max-width: 500px; border-radius: 16px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; }
-        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 12px; margin: 8px 0; background: var(--bg-primary); border: 1px solid var(--border-gold); color: #fff; border-radius: 8px; }
+        .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-gold); width: 90%; max-width: 550px; border-radius: 16px; padding: 25px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 10px; margin: 6px 0; background: var(--bg-primary); border: 1px solid var(--border-gold); color: #fff; border-radius: 8px; }
+        
+        .admin-block { background: var(--bg-card); padding: 15px; border-radius: 10px; border: 1px solid var(--border-gold); margin-top: 15px; }
 
         .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; z-index: 999; text-decoration: none; }
 
@@ -88,15 +86,13 @@
             .menu-toggle { display: block; }
             .nav-links { position: absolute; top: 65px; left: 0; width: 100%; background: var(--bg-secondary); flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border-gold); display: none; }
             .nav-links.active { display: flex; }
-            .feature-row, .feature-row.reverse { flex-direction: column; gap: 20px; }
             .slide { height: 260px; }
-            .slide-caption h2 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- Header -->
     <header>
         <div class="logo gold-text" id="disp-coaching-name">GOLDEN ACADEMY</div>
         <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
@@ -107,54 +103,48 @@
             <li><a href="#material" onclick="toggleMenu()">Study Material</a></li>
             <li><a href="#admission" onclick="toggleMenu()">Admission</a></li>
             <li><a href="#developer" onclick="toggleMenu()">About Creator</a></li>
-            <li><button class="gold-btn" onclick="openModal('adminModal'); toggleMenu();"><i class="fa-solid fa-lock"></i> Admin Login</button></li>
+            <li><button class="gold-btn" onclick="openModal('adminModal'); toggleMenu();"><i class="fa-solid fa-lock"></i> Admin Panel</button></li>
         </ul>
     </header>
 
-    <!-- Announcement Ticker -->
+    <!-- Ticker -->
     <div class="ticker-wrap" id="home">
-        <div class="ticker" id="disp-ticker">⚡ New Batches Starting This Week! Register Online Today For Special Discount!</div>
+        <div class="ticker" id="disp-ticker">⚡ New Batches Starting This Week! Register Online Today!</div>
     </div>
 
-    <!-- Auto-Scrolling Banner Slider -->
+    <!-- Slider -->
     <div class="slider-container">
         <div class="slider-track" id="slider-track">
             <div class="slide">
                 <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=80" alt="Banner 1">
-                <div class="slide-caption">
-                    <h2 class="gold-text">Welcome to Golden Academy</h2>
-                    <p>Empowering Students for Academic Success.</p>
-                </div>
+                <div class="slide-caption"><h2 class="gold-text">Welcome to Golden Academy</h2><p>Empowering Students for Academic Success.</p></div>
             </div>
             <div class="slide">
                 <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80" alt="Banner 2">
-                <div class="slide-caption">
-                    <h2 class="gold-text">Interactive Digital Classrooms</h2>
-                    <p>Learn with modern facilities and expert guidance.</p>
-                </div>
+                <div class="slide-caption"><h2 class="gold-text">Interactive Digital Classrooms</h2><p>Learn with modern facilities.</p></div>
             </div>
         </div>
     </div>
 
-    <!-- Courses Section -->
+    <!-- Courses -->
     <section id="courses" style="background: var(--bg-secondary);">
         <h2 class="section-title gold-text">Our Courses</h2>
         <div class="grid-3" id="courses-grid"></div>
     </section>
 
-    <!-- Teachers Section -->
+    <!-- Teachers -->
     <section id="faculty">
         <h2 class="section-title gold-text">Expert Faculty</h2>
         <div class="grid-3" id="faculty-grid"></div>
     </section>
 
-    <!-- Admission Section -->
+    <!-- Admission Form -->
     <section id="admission" style="background: var(--bg-secondary);">
         <h2 class="section-title gold-text">Online Admission Enquiry</h2>
         <div class="card" style="max-width: 500px; margin: 0 auto;">
-            <input type="text" id="enq-name" placeholder="Student Full Name" style="width:100%; padding:12px; margin:8px 0; background:var(--bg-primary); border:1px solid var(--border-gold); color:#fff; border-radius:8px;">
-            <input type="text" id="enq-phone" placeholder="Mobile Number" style="width:100%; padding:12px; margin:8px 0; background:var(--bg-primary); border:1px solid var(--border-gold); color:#fff; border-radius:8px;">
-            <select id="enq-course" style="width:100%; padding:12px; margin:8px 0; background:var(--bg-primary); border:1px solid var(--border-gold); color:#fff; border-radius:8px;">
+            <input type="text" id="enq-name" placeholder="Student Full Name">
+            <input type="text" id="enq-phone" placeholder="Mobile Number">
+            <select id="enq-course">
                 <option value="Class 10th">Class 10th Batch</option>
                 <option value="Class 12th">Class 12th Batch</option>
                 <option value="NEET/JEE">NEET / JEE Target Batch</option>
@@ -163,18 +153,17 @@
         </div>
     </section>
 
-    <!-- Study Material Section -->
+    <!-- Study Material -->
     <section id="material">
         <h2 class="section-title gold-text">Study Material & PDFs</h2>
         <div class="grid-3" id="pdf-grid"></div>
     </section>
 
-    <!-- Developer Section -->
+    <!-- Permanent Developer Section -->
     <section class="developer-section" id="developer">
         <div class="developer-card">
             <h3 class="gold-text">Website Developer Info</h3>
-            <p>Yeh website professional Web Development & Automation Services dwara banayi gayi hai. Direct WhatsApp par contact karein.</p>
-            <!-- Apne WhatsApp Number se Replace Karein -->
+            <p>Yeh website professional Web Development Services dwara banayi gayi hai. Custom website banwane ke liye contact karein.</p>
             <a href="https://wa.me/919999999999?text=Hello!%20I%20want%20to%20develop%20a%20website" target="_blank" class="developer-btn">
                 <i class="fa-brands fa-whatsapp"></i> Contact Web Developer
             </a>
@@ -186,33 +175,62 @@
         <p style="text-align:center; padding: 30px;" class="gold-text" id="disp-footer-name">Golden Academy © 2026</p>
     </footer>
 
-    <!-- WhatsApp Floating Icon -->
     <a href="https://wa.me/" id="disp-wa-float" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <!-- Admin Modal -->
+    <!-- Complete Admin Modal -->
     <div class="modal" id="adminModal">
         <div class="modal-box">
             <h2 class="gold-text" style="margin-bottom:15px;">Admin Control Panel</h2>
+            
             <div id="login-form">
                 <input type="email" id="admin-email" placeholder="Admin Email">
                 <input type="password" id="admin-pass" placeholder="Password">
                 <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="handleLogin()">Login</button>
             </div>
-            <div id="admin-controls" class="admin-only">
-                <h4 class="gold-text">General Settings</h4>
-                <input type="text" id="edit-name" placeholder="Coaching Name">
-                <input type="text" id="edit-ticker" placeholder="Announcement Ticker">
-                <input type="text" id="edit-wa" placeholder="WhatsApp Number">
 
-                <button class="gold-btn" style="width:100%; margin-top:10px;" onclick="saveGeneral()">Save Changes</button>
-                <button class="gold-btn" style="width:100%; margin-top:15px; background:#ef4444; color:#fff;" onclick="handleLogout()">Logout</button>
+            <div id="admin-controls" class="admin-only">
+                <!-- General Settings -->
+                <div class="admin-block">
+                    <h4 class="gold-text">General Settings</h4>
+                    <input type="text" id="edit-name" placeholder="Coaching Name">
+                    <input type="text" id="edit-ticker" placeholder="Announcement Ticker">
+                    <input type="text" id="edit-wa" placeholder="WhatsApp Number (e.g. 919876543210)">
+                    <button class="gold-btn" style="width:100%; margin-top:8px;" onclick="saveGeneral()">Save General Settings</button>
+                </div>
+
+                <!-- Add Course -->
+                <div class="admin-block">
+                    <h4 class="gold-text">Add New Course</h4>
+                    <input type="text" id="c-title" placeholder="Course Title (e.g. Class 12 Physics)">
+                    <input type="text" id="c-img" placeholder="Image Direct URL (http://...)">
+                    <textarea id="c-desc" placeholder="Course Description"></textarea>
+                    <button class="gold-btn" style="width:100%; margin-top:8px;" onclick="addCourse()">Add Course</button>
+                </div>
+
+                <!-- Add Teacher -->
+                <div class="admin-block">
+                    <h4 class="gold-text">Add Teacher</h4>
+                    <input type="text" id="t-name" placeholder="Teacher Name">
+                    <input type="text" id="t-sub" placeholder="Subject / Designation">
+                    <input type="text" id="t-img" placeholder="Photo Direct URL (http://...)">
+                    <button class="gold-btn" style="width:100%; margin-top:8px;" onclick="addTeacher()">Add Teacher</button>
+                </div>
+
+                <!-- Add PDF/Material -->
+                <div class="admin-block">
+                    <h4 class="gold-text">Add Study Material / PDF</h4>
+                    <input type="text" id="p-title" placeholder="Material Title (e.g. Maths Chapter 1 PDF)">
+                    <input type="text" id="p-link" placeholder="PDF Drive / Direct Link">
+                    <button class="gold-btn" style="width:100%; margin-top:8px;" onclick="addPDF()">Add Study Material</button>
+                </div>
+
+                <button class="gold-btn" style="width:100%; margin-top:20px; background:#ef4444; color:#fff;" onclick="handleLogout()">Logout</button>
             </div>
             <button onclick="closeModal('adminModal')" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
         </div>
     </div>
 
     <script>
-        // AAPKI INTEGRATED FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyDhfkdKps5tzuUssZ3y0OP-jsdCFV2l8ww",
             authDomain: "coachingacademy-87920.firebaseapp.com",
@@ -226,22 +244,21 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        function toggleMenu() {
-            document.getElementById('navLinks').classList.toggle('active');
-        }
-
-        let currentSlide = 0;
-        function updateSlider() {
-            const track = document.getElementById('slider-track');
-            if (!track || track.children.length === 0) return;
-            currentSlide = (currentSlide + 1) % track.children.length;
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
-        setInterval(updateSlider, 4000);
-
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
+        // Slider
+        let currentSlide = 0;
+        setInterval(() => {
+            const track = document.getElementById('slider-track');
+            if (track && track.children.length > 0) {
+                currentSlide = (currentSlide + 1) % track.children.length;
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+        }, 4000);
+
+        // Auth Auth Observer
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.body.classList.add('is-admin');
@@ -252,6 +269,7 @@
                 document.getElementById('login-form').style.display = "block";
                 document.getElementById('admin-controls').style.display = "none";
             }
+            renderAllData();
         });
 
         function handleLogin() {
@@ -263,6 +281,7 @@
 
         function handleLogout() { auth.signOut().then(() => closeModal('adminModal')); }
 
+        // Fetch General Settings
         db.collection('settings').doc('general').onSnapshot(doc => {
             if (doc.exists) {
                 const d = doc.data();
@@ -270,6 +289,10 @@
                 document.getElementById('disp-footer-name').innerText = (d.name || "Golden Academy") + " © 2026";
                 document.getElementById('disp-ticker').innerText = d.ticker || "";
                 document.getElementById('disp-wa-float').href = "https://wa.me/" + (d.wa || "");
+                
+                document.getElementById('edit-name').value = d.name || "";
+                document.getElementById('edit-ticker').value = d.ticker || "";
+                document.getElementById('edit-wa').value = d.wa || "";
             }
         });
 
@@ -278,7 +301,103 @@
                 name: document.getElementById('edit-name').value,
                 ticker: document.getElementById('edit-ticker').value,
                 wa: document.getElementById('edit-wa').value
-            }, { merge: true }).then(() => alert("Saved!"));
+            }, { merge: true }).then(() => alert("Settings Saved Successfully!"));
+        }
+
+        // Render Data from Firestore
+        function renderAllData() {
+            const isAdmin = document.body.classList.contains('is-admin');
+
+            // Render Courses
+            db.collection('courses').onSnapshot(snapshot => {
+                const grid = document.getElementById('courses-grid');
+                grid.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const c = doc.data();
+                    grid.innerHTML += `
+                        <div class="card">
+                            <img src="${c.img || 'https://via.placeholder.com/300'}" alt="Course">
+                            <h3 class="gold-text">${c.title}</h3>
+                            <p style="color:var(--text-muted); font-size:0.9rem; margin-top:6px;">${c.desc}</p>
+                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('courses', '${doc.id}')">Delete</button>` : ''}
+                        </div>`;
+                });
+            });
+
+            // Render Teachers
+            db.collection('teachers').onSnapshot(snapshot => {
+                const grid = document.getElementById('faculty-grid');
+                grid.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const t = doc.data();
+                    grid.innerHTML += `
+                        <div class="card" style="text-align:center;">
+                            <img src="${t.img || 'https://via.placeholder.com/300'}" alt="Teacher" style="border-radius:50%; width:120px; height:120px; margin:0 auto 10px auto;">
+                            <h3 class="gold-text">${t.name}</h3>
+                            <p style="color:var(--accent-gold); font-weight:600; font-size:0.9rem;">${t.sub}</p>
+                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('teachers', '${doc.id}')">Delete</button>` : ''}
+                        </div>`;
+                });
+            });
+
+            // Render Study Material
+            db.collection('pdfs').onSnapshot(snapshot => {
+                const grid = document.getElementById('pdf-grid');
+                grid.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    grid.innerHTML += `
+                        <div class="card">
+                            <h3 class="gold-text"><i class="fa-solid fa-file-pdf"></i> ${p.title}</h3>
+                            <a href="${p.link}" target="_blank" class="gold-btn" style="margin-top:10px; font-size:0.85rem; padding:6px 15px;">Download PDF</a>
+                            ${isAdmin ? `<br><button class="delete-btn" onclick="deleteDoc('pdfs', '${doc.id}')">Delete</button>` : ''}
+                        </div>`;
+                });
+            });
+        }
+
+        // Add Functions
+        function addCourse() {
+            const title = document.getElementById('c-title').value;
+            const img = document.getElementById('c-img').value;
+            const desc = document.getElementById('c-desc').value;
+            if(!title) return alert("Title is required!");
+            db.collection('courses').add({ title, img, desc }).then(() => {
+                alert("Course Added!");
+                document.getElementById('c-title').value = "";
+                document.getElementById('c-img').value = "";
+                document.getElementById('c-desc').value = "";
+            });
+        }
+
+        function addTeacher() {
+            const name = document.getElementById('t-name').value;
+            const sub = document.getElementById('t-sub').value;
+            const img = document.getElementById('t-img').value;
+            if(!name) return alert("Name is required!");
+            db.collection('teachers').add({ name, sub, img }).then(() => {
+                alert("Teacher Added!");
+                document.getElementById('t-name').value = "";
+                document.getElementById('t-sub').value = "";
+                document.getElementById('t-img').value = "";
+            });
+        }
+
+        function addPDF() {
+            const title = document.getElementById('p-title').value;
+            const link = document.getElementById('p-link').value;
+            if(!title || !link) return alert("All fields are required!");
+            db.collection('pdfs').add({ title, link }).then(() => {
+                alert("Study Material Added!");
+                document.getElementById('p-title').value = "";
+                document.getElementById('p-link').value = "";
+            });
+        }
+
+        function deleteDoc(collection, id) {
+            if(confirm("Kya aap ise delete karna chahte hain?")) {
+                db.collection(collection).doc(id).delete();
+            }
         }
 
         function submitEnquiry() {
@@ -288,7 +407,7 @@
             if(!name || !phone) return alert("Fill all details");
             
             db.collection('enquiries').add({ name, phone, course, timestamp: new Date() })
-                .then(() => alert("Submitted!"));
+                .then(() => alert("Admission Enquiry Submitted!"));
         }
     </script>
 </body>
