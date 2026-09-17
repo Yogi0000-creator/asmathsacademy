@@ -291,7 +291,7 @@
             }
         }, 4000);
 
-        // Auth Listener
+        // Auth Listener & Real-time setup
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.body.classList.add('is-admin');
@@ -337,92 +337,107 @@
             }, { merge: true }).then(() => alert("Settings Updated!"));
         }
 
-        // Render Data Function with Sequence Order
+        // Realtime Render Function
         function renderAllData() {
             const isAdmin = document.body.classList.contains('is-admin');
 
             // 1. Hero Slider Banners
-            db.collection('banners').where('type', '==', 'hero').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('banners').where('type', '==', 'hero').onSnapshot(snapshot => {
                 const track = document.getElementById('slider-track');
                 track.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const b = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(b => {
                     track.innerHTML += `
                         <div class="slide">
                             <img src="${b.img || 'https://via.placeholder.com/1200x400'}" alt="Banner">
                             <div class="slide-caption">
                                 <h2 class="gold-text">${b.title}</h2>
                                 <p>${b.desc}</p>
-                                ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('banners', '${doc.id}')">Delete Banner</button>` : ''}
+                                ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('banners', '${b.id}')">Delete Banner</button>` : ''}
                             </div>
                         </div>`;
                 });
             });
 
             // 2. Middle/Bottom Banners
-            db.collection('banners').where('type', '==', 'bottom').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('banners').where('type', '==', 'bottom').onSnapshot(snapshot => {
                 const container = document.getElementById('bottom-banners-container');
                 container.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const b = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(b => {
                     container.innerHTML += `
                         <div class="custom-banner">
                             <img src="${b.img}" alt="Banner">
                             <div class="custom-banner-text">
                                 <h2 class="gold-text">${b.title}</h2>
                                 <p style="color:#fff; margin-top:5px;">${b.desc}</p>
-                                ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('banners', '${doc.id}')">Delete</button>` : ''}
+                                ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('banners', '${b.id}')">Delete</button>` : ''}
                             </div>
                         </div>`;
                 });
             });
 
             // 3. Courses
-            db.collection('courses').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('courses').onSnapshot(snapshot => {
                 const grid = document.getElementById('courses-grid');
                 grid.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const c = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(c => {
                     grid.innerHTML += `
                         <div class="card">
                             ${isAdmin ? `<span class="badge-seq">Seq: ${c.seq || 0}</span>` : ''}
                             <img src="${c.img || 'https://via.placeholder.com/300'}" alt="Course">
                             <h3 class="gold-text">${c.title}</h3>
                             <p style="color:var(--text-muted); font-size:0.9rem; margin-top:6px;">${c.desc}</p>
-                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('courses', '${doc.id}')">Delete</button>` : ''}
+                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('courses', '${c.id}')">Delete</button>` : ''}
                         </div>`;
                 });
             });
 
             // 4. Paragraphs / Announcement Blocks
-            db.collection('paragraphs').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('paragraphs').onSnapshot(snapshot => {
                 const container = document.getElementById('blocks-container');
                 container.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const p = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(p => {
                     container.innerHTML += `
                         <div class="card" style="margin-bottom:15px;">
                             ${isAdmin ? `<span class="badge-seq">Seq: ${p.seq || 0}</span>` : ''}
                             <h3 class="gold-text">${p.head}</h3>
                             <p style="color:var(--text-main); margin-top:10px; line-height:1.6; white-space: pre-line;">${p.content}</p>
-                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('paragraphs', '${doc.id}')">Delete Block</button>` : ''}
+                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('paragraphs', '${p.id}')">Delete Block</button>` : ''}
                         </div>`;
                 });
             });
 
             // 5. Teachers
-            db.collection('teachers').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('teachers').onSnapshot(snapshot => {
                 const grid = document.getElementById('faculty-grid');
                 grid.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const t = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(t => {
                     grid.innerHTML += `
                         <div class="card" style="text-align:center;">
                             ${isAdmin ? `<span class="badge-seq">Seq: ${t.seq || 0}</span>` : ''}
                             <img src="${t.img || 'https://via.placeholder.com/300'}" alt="Teacher" style="border-radius:50%; width:120px; height:120px; margin:0 auto 10px auto;">
                             <h3 class="gold-text">${t.name}</h3>
                             <p style="color:var(--accent-gold); font-weight:600; font-size:0.9rem;">${t.sub}</p>
-                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('teachers', '${doc.id}')">Delete</button>` : ''}
+                            ${isAdmin ? `<button class="delete-btn" onclick="deleteDoc('teachers', '${t.id}')">Delete</button>` : ''}
                         </div>`;
                 });
             });
@@ -444,73 +459,104 @@
             });
 
             // 7. Study Material PDFs
-            db.collection('pdfs').orderBy('seq', 'asc').onSnapshot(snapshot => {
+            db.collection('pdfs').onSnapshot(snapshot => {
                 const grid = document.getElementById('pdf-grid');
                 grid.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const p = doc.data();
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (a.seq || 0) - (b.seq || 0));
+
+                docs.forEach(p => {
                     grid.innerHTML += `
                         <div class="card">
                             ${isAdmin ? `<span class="badge-seq">Seq: ${p.seq || 0}</span>` : ''}
                             <h3 class="gold-text"><i class="fa-solid fa-file-pdf"></i> ${p.title}</h3>
                             <a href="${p.link}" target="_blank" class="gold-btn" style="margin-top:10px; font-size:0.85rem; padding:6px 15px;">Download PDF</a>
-                            ${isAdmin ? `<br><button class="delete-btn" onclick="deleteDoc('pdfs', '${doc.id}')">Delete</button>` : ''}
+                            ${isAdmin ? `<br><button class="delete-btn" onclick="deleteDoc('pdfs', '${p.id}')">Delete</button>` : ''}
                         </div>`;
                 });
             });
         }
 
-        // Add Functions
+        // Instant Add Functions with Auto Input Clear
         function addBanner(type) {
-            const title = type === 'hero' ? document.getElementById('b-title').value : document.getElementById('mb-title').value;
-            const desc = type === 'hero' ? document.getElementById('b-desc').value : document.getElementById('mb-desc').value;
-            const img = type === 'hero' ? document.getElementById('b-img').value : document.getElementById('mb-img').value;
-            const seq = parseInt(type === 'hero' ? document.getElementById('b-seq').value : document.getElementById('mb-seq').value) || 1;
+            const titleInput = document.getElementById(type === 'hero' ? 'b-title' : 'mb-title');
+            const descInput = document.getElementById(type === 'hero' ? 'b-desc' : 'mb-desc');
+            const imgInput = document.getElementById(type === 'hero' ? 'b-img' : 'mb-img');
+            const seqInput = document.getElementById(type === 'hero' ? 'b-seq' : 'mb-seq');
+            
+            const title = titleInput.value;
+            const desc = descInput.value;
+            const img = imgInput.value;
+            const seq = parseInt(seqInput.value) || 1;
             
             if(!title || !img) return alert("Title and Image URL are required!");
-            db.collection('banners').add({ title, desc, img, type, seq }).then(() => alert("Banner Added!"));
+            db.collection('banners').add({ title, desc, img, type, seq }).then(() => {
+                titleInput.value = ""; descInput.value = ""; imgInput.value = ""; seqInput.value = "";
+                alert("Banner Added Successfully!");
+            });
         }
 
         function addCourse() {
-            const title = document.getElementById('c-title').value;
-            const img = document.getElementById('c-img').value;
-            const desc = document.getElementById('c-desc').value;
-            const seq = parseInt(document.getElementById('c-seq').value) || 1;
-            if(!title) return alert("Title is required!");
-            db.collection('courses').add({ title, img, desc, seq }).then(() => alert("Course Added!"));
+            const t = document.getElementById('c-title');
+            const i = document.getElementById('c-img');
+            const d = document.getElementById('c-desc');
+            const s = document.getElementById('c-seq');
+            
+            if(!t.value) return alert("Title is required!");
+            db.collection('courses').add({ title: t.value, img: i.value, desc: d.value, seq: parseInt(s.value)||1 }).then(() => {
+                t.value = ""; i.value = ""; d.value = ""; s.value = "";
+                alert("Course Added Successfully!");
+            });
         }
 
         function addTextParagraph() {
-            const head = document.getElementById('p-head').value;
-            const content = document.getElementById('p-content').value;
-            const seq = parseInt(document.getElementById('p-seq').value) || 1;
-            if(!head || !content) return alert("Header and Content required!");
-            db.collection('paragraphs').add({ head, content, seq }).then(() => alert("Paragraph Block Added!"));
+            const h = document.getElementById('p-head');
+            const c = document.getElementById('p-content');
+            const s = document.getElementById('p-seq');
+            
+            if(!h.value || !c.value) return alert("Header and Content required!");
+            db.collection('paragraphs').add({ head: h.value, content: c.value, seq: parseInt(s.value)||1 }).then(() => {
+                h.value = ""; c.value = ""; s.value = "";
+                alert("Paragraph Block Added Successfully!");
+            });
         }
 
         function addTeacher() {
-            const name = document.getElementById('t-name').value;
-            const sub = document.getElementById('t-sub').value;
-            const img = document.getElementById('t-img').value;
-            const seq = parseInt(document.getElementById('t-seq').value) || 1;
-            if(!name) return alert("Name required!");
-            db.collection('teachers').add({ name, sub, img, seq }).then(() => alert("Teacher Added!"));
+            const n = document.getElementById('t-name');
+            const sub = document.getElementById('t-sub');
+            const i = document.getElementById('t-img');
+            const s = document.getElementById('t-seq');
+            
+            if(!n.value) return alert("Name required!");
+            db.collection('teachers').add({ name: n.value, sub: sub.value, img: i.value, seq: parseInt(s.value)||1 }).then(() => {
+                n.value = ""; sub.value = ""; i.value = ""; s.value = "";
+                alert("Teacher Added Successfully!");
+            });
         }
 
         function addCustomLink() {
-            const title = document.getElementById('l-title').value;
-            const url = document.getElementById('l-url').value;
-            const icon = document.getElementById('l-icon').value || "fa-link";
-            if(!title || !url) return alert("Title and URL required!");
-            db.collection('links').add({ title, url, icon }).then(() => alert("Custom Link Added!"));
+            const t = document.getElementById('l-title');
+            const u = document.getElementById('l-url');
+            const i = document.getElementById('l-icon');
+            
+            if(!t.value || !u.value) return alert("Title and URL required!");
+            db.collection('links').add({ title: t.value, url: u.value, icon: i.value || "fa-link" }).then(() => {
+                t.value = ""; u.value = ""; i.value = "";
+                alert("Custom Link Added Successfully!");
+            });
         }
 
         function addPDF() {
-            const title = document.getElementById('pdf-title').value;
-            const link = document.getElementById('pdf-link').value;
-            const seq = parseInt(document.getElementById('pdf-seq').value) || 1;
-            if(!title || !link) return alert("Title and Link required!");
-            db.collection('pdfs').add({ title, link, seq }).then(() => alert("PDF Added!"));
+            const t = document.getElementById('pdf-title');
+            const l = document.getElementById('pdf-link');
+            const s = document.getElementById('pdf-seq');
+            
+            if(!t.value || !l.value) return alert("Title and Link required!");
+            db.collection('pdfs').add({ title: t.value, link: l.value, seq: parseInt(s.value)||1 }).then(() => {
+                t.value = ""; l.value = ""; s.value = "";
+                alert("PDF Added Successfully!");
+            });
         }
 
         function deleteDoc(collection, id) {
